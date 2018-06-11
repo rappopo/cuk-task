@@ -30,7 +30,6 @@ module.exports = function(cuk){
       name: '',
       action: opts => {
         let jobDef = require(cuk)(opts.file)
-        pkg.trace('Serve » %s loaded', opts.key)
         let onTick = jobDef.onTick
         if (_.has(jobDef, 'timeout') && _.has(jobDef, 'locked')) {
           let oFn = onTick
@@ -47,13 +46,15 @@ module.exports = function(cuk){
           start: false,
           timeZone: jobDef.timezone || 'UTC',
         })
-        job.name = `${id}:${jobId}`
-        job.log = debug('paps:task:' + job.name)
+        job.name = `${opts.pkg.id}:${opts.key}`
+        if (cuk.pkg.log && _.get(opts.pkg, 'cfg.cuks.task.log'))
+          job.log = helper('log:make')(opts.pkg.id, opts.key)
         if (_.has(jobDef, 'timeout') && _.has(jobDef, 'locked')) {
           job.timeout = jobDef.timeout
           job.locked = jobDef.locked
         }
         _.set(opts.pkg, 'cuks.task.' + opts.key, job)
+        pkg.trace('Serve » %s loaded', job.name)
         setTimeout(function(){
           if (!helper('core:isSet')(jobDef.runOnInit) || jobDef.runOnInit) {
             onTick.apply(job, arguments)
@@ -61,7 +62,6 @@ module.exports = function(cuk){
           let start = !helper('core:isSet')(jobDef.start) ? true : jobDef.start
           if (start) job.start()
         }, pkg.cfg.common.initDelay)
-
       }
     })
     resolve(true)
