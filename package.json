@@ -1,0 +1,14 @@
+{
+  "name": "@rappopo/cuk-task",
+  "version": "0.0.1",
+  "description": "Task scheduler",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ardhi Lukianto <ardhi@lukianto.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cron": "^1.3.0"
+  }
+}

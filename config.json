@@ -1,0 +1,6 @@
+{
+  "common": {
+    "throttle": 2000,
+    "initDelay": 5000
+  }
+}
