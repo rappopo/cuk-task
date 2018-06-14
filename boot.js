@@ -29,7 +29,7 @@ module.exports = function(cuk){
       pkgId: pkgId,
       name: '',
       action: opts => {
-        let jobDef = require(cuk)(opts.file)
+        let jobDef = require(opts.file)(cuk)
         let onTick = jobDef.onTick
         if (_.has(jobDef, 'timeout') && _.has(jobDef, 'locked')) {
           let oFn = onTick
@@ -56,7 +56,7 @@ module.exports = function(cuk){
         _.set(opts.pkg, 'cuks.task.' + opts.key, job)
         pkg.trace('Serve » %s loaded', job.name)
         setTimeout(function(){
-          if (!helper('core:isSet')(jobDef.runOnInit) || jobDef.runOnInit) {
+          if (!helper('core:isSet')(jobDef.autoStart) || jobDef.autoStart) {
             onTick.apply(job, arguments)
           }
           let start = !helper('core:isSet')(jobDef.start) ? true : jobDef.start

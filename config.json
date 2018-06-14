@@ -2,5 +2,13 @@
   "common": {
     "throttle": 2000,
     "initDelay": 5000
+  },
+  "cuks": {
+    "task": {
+      "clearTmpDir": {
+        "maxAge": 3600000,
+        "exclude": []
+      }
+    }
   }
 }
