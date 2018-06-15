@@ -5,7 +5,7 @@ module.exports = function(cuk) {
   const pkg = cuk.pkg.task
 
   return {
-    time: '*/5 * * * * *',
+    time: '*/30 * * * *',
     onTick: function() {
       this.locked = moment()
       const tmp = path.join(cuk.dir.data, 'tmp')
@@ -44,7 +44,6 @@ module.exports = function(cuk) {
       this.locked = false
     },
     timeout: 30,
-    locked: false,
     autoStart: true
   }
 

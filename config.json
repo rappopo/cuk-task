@@ -1,7 +1,7 @@
 {
   "common": {
-    "throttle": 2000,
-    "initDelay": 5000
+    "throttle": "2s",
+    "initDelay": "5s"
   },
   "cuks": {
     "task": {

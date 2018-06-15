@@ -9,8 +9,9 @@ module.exports = function(cuk){
   const { _, moment, helper } = cuk.lib
 
   const timeoutFn = function (c) {
-    if (!(_.has(c, 'timeout') && (_.has(c, 'locked')))) return
+    if (!_.has(c, 'timeout')) return
     if (c.locked) {
+      if (!c.locked.isValid()) return
       if (moment().diff(c.locked, 'seconds') > c.timeout) {
         pkg.trace('%s: forced to execute after %s seconds timeout exceeded', c.name, c.timeout)
       } else {
@@ -21,7 +22,6 @@ module.exports = function(cuk){
     return moment()
   }
 
-  pkg.trace('Initializing...')
   pkg.lib.cron = Cron
 
   return new Promise((resolve, reject) => {
@@ -29,6 +29,12 @@ module.exports = function(cuk){
       pkgId: pkgId,
       name: '',
       action: opts => {
+        const disabled = _.get(cuk.pkg.task, 'cfg.common.disabled', []),
+          name = `${opts.pkg.id}:${opts.key}`
+        if (disabled.indexOf(name) > -1) {
+          helper('core:bootTrace')('%A Disabled %K %s loaded', null, null, name)
+          return
+        }
         let jobDef = require(opts.file)(cuk)
         let onTick = jobDef.onTick
         if (_.has(jobDef, 'timeout') && _.has(jobDef, 'locked')) {
@@ -40,28 +46,29 @@ module.exports = function(cuk){
             oFn.apply(this, arguments)
           }
         }
+
         let job = new cron({
           cronTime: jobDef.time,
-          onTick: _.throttle(onTick, pkg.cfg.common.throttle),
+          onTick: _.throttle(onTick, helper('core:parseUnitOfTime')(pkg.cfg.common.throttle)),
           start: false,
           timeZone: jobDef.timezone || 'UTC',
         })
-        job.name = `${opts.pkg.id}:${opts.key}`
+        job.name = name
         if (cuk.pkg.log && _.get(opts.pkg, 'cfg.cuks.task.log'))
           job.log = helper('log:make')(opts.pkg.id, opts.key)
-        if (_.has(jobDef, 'timeout') && _.has(jobDef, 'locked')) {
+        if (_.has(jobDef, 'timeout')) {
           job.timeout = jobDef.timeout
-          job.locked = jobDef.locked
+          job.locked = jobDef.locked || false
         }
         _.set(opts.pkg, 'cuks.task.' + opts.key, job)
-        pkg.trace('Serve » %s loaded', job.name)
+        helper('core:bootTrace')('%A Enabled %K %s loaded', null, null, job.name)
         setTimeout(function(){
           if (!helper('core:isSet')(jobDef.autoStart) || jobDef.autoStart) {
             onTick.apply(job, arguments)
           }
           let start = !helper('core:isSet')(jobDef.start) ? true : jobDef.start
           if (start) job.start()
-        }, pkg.cfg.common.initDelay)
+        }, helper('core:parseUnitOfTime')(pkg.cfg.common.initDelay))
       }
     })
     resolve(true)
