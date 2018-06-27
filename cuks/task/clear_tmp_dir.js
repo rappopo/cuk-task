@@ -14,11 +14,16 @@ module.exports = function(cuk) {
       })
       let success = 0, error = 0, skipped = 0, excluded = 0
 
-      let exclude = _.get(pkg.cfg, 'cuks.task.clearTmpDir.exclude', []),
-        excludeDir = _.filter(exclude, item => {
-          if (!fs.existsSync(item)) return false
-          return fs.statSync(item).isDirectory()
-        })
+      let exclude = _.get(pkg.cfg, 'cuks.task.clearTmpDir.exclude', [])
+      exclude.push('./dev.sock', './upload')
+      _.each(exclude, (item, i) => {
+        if (!path.isAbsolute(item))
+          exclude[i] = path.join(cuk.dir.data, 'tmp', item)
+      })
+      let excludeDir = _.filter(exclude, item => {
+        if (!fs.existsSync(item)) return false
+        return fs.statSync(item).isDirectory()
+      })
       exclude = _.difference(exclude, excludeDir)
 
       _.each(files, f => {
