@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = function(cuk) {
-  const { _, globby, path, fs, moment, helper } = cuk.lib
+  const { _, globby, path, fs, moment, helper } = cuk.pkg.core.lib
   const pkg = cuk.pkg.task
 
   return {

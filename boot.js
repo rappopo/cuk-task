@@ -6,7 +6,7 @@ const cron = Cron.CronJob
 module.exports = function(cuk){
   let pkgId = 'task',
     pkg = cuk.pkg[pkgId]
-  const { _, moment, helper } = cuk.lib
+  const { _, moment, helper } = cuk.pkg.core.lib
 
   const timeoutFn = function (c) {
     if (!_.has(c, 'timeout')) return
@@ -54,8 +54,8 @@ module.exports = function(cuk){
           timeZone: jobDef.timezone || 'UTC',
         })
         job.name = name
-        if (cuk.pkg.log && _.get(opts.pkg, 'cfg.cuks.task.log'))
-          job.log = helper('log:make')(opts.pkg.id, opts.key)
+        if (cuk.pkg.log && _.get(opts.pkg, 'cfg.cuks.task.log.' + opts.key))
+          job.log = helper('log:make')(`${opts.pkg.id}:${opts.key}`)
         if (_.has(jobDef, 'timeout')) {
           job.timeout = jobDef.timeout
           job.locked = jobDef.locked || false
