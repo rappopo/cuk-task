@@ -32,7 +32,7 @@ module.exports = function(cuk){
         const disabled = _.get(cuk.pkg.task, 'cfg.common.disabled', []),
           name = `${opts.pkg.id}:${opts.key}`
         if (disabled.indexOf(name) > -1) {
-          helper('core:bootTrace')('|  |- Disabled => %s loaded', name)
+          helper('core:trace')('|  |- Disabled => %s loaded', name)
           return
         }
         let jobDef = require(opts.file)(cuk)
@@ -61,7 +61,7 @@ module.exports = function(cuk){
           job.locked = jobDef.locked || false
         }
         _.set(opts.pkg, 'cuks.task.' + opts.key, job)
-        helper('core:bootTrace')('|  |- Enabled => %s loaded', job.name)
+        helper('core:trace')('|  |- Enabled => %s loaded', job.name)
         setTimeout(function(){
           if (!helper('core:isSet')(jobDef.autoStart) || jobDef.autoStart) {
             onTick.apply(job, arguments)
