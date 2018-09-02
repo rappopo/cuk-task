@@ -3,7 +3,7 @@
 const Cron = require('cron')
 const cron = Cron.CronJob
 
-module.exports = function(cuk){
+module.exports = function (cuk){
   let pkgId = 'task',
     pkg = cuk.pkg[pkgId]
   const { _, moment, helper } = cuk.pkg.core.lib
@@ -39,7 +39,7 @@ module.exports = function(cuk){
         let onTick = jobDef.onTick
         if (_.has(jobDef, 'timeout') && _.has(jobDef, 'locked')) {
           let oFn = onTick
-          onTick = function() {
+          onTick = function () {
             let lock = timeoutFn(this)
             if (!lock) return
             this.locked = lock
@@ -62,7 +62,7 @@ module.exports = function(cuk){
         }
         _.set(opts.pkg, 'cuks.task.' + opts.key, job)
         helper('core:trace')('|  |- Enabled => %s loaded', job.name)
-        setTimeout(function(){
+        setTimeout(function (){
           if (!helper('core:isSet')(jobDef.autoStart) || jobDef.autoStart) {
             onTick.apply(job, arguments)
           }
