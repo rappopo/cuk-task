@@ -29,7 +29,7 @@ module.exports = function (cuk){
       pkgId: pkgId,
       name: '',
       action: opts => {
-        const disabled = _.get(cuk.pkg.task, 'cfg.common.disabled', []),
+        const disabled = _.get(cuk.pkg.task, 'cfg.disabled', []),
           name = `${opts.pkg.id}:${opts.key}`
         if (disabled.indexOf(name) > -1) {
           helper('core:trace')('|  |- Disabled => %s loaded', name)
@@ -49,7 +49,7 @@ module.exports = function (cuk){
 
         let job = new cron({
           cronTime: jobDef.time,
-          onTick: _.throttle(onTick, helper('core:parseUnitOfTime')(pkg.cfg.common.throttle)),
+          onTick: _.throttle(onTick, helper('core:parseUnitOfTime')(pkg.cfg.throttle)),
           start: false,
           timeZone: jobDef.timezone || 'UTC',
         })
@@ -68,7 +68,7 @@ module.exports = function (cuk){
           }
           let start = !helper('core:isSet')(jobDef.start) ? true : jobDef.start
           if (start) job.start()
-        }, helper('core:parseUnitOfTime')(pkg.cfg.common.initDelay))
+        }, helper('core:parseUnitOfTime')(pkg.cfg.initDelay))
       }
     })
     resolve(true)

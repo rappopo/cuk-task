@@ -1,6 +1,4 @@
 {
-  "common": {
-    "throttle": "2s",
-    "initDelay": "5s"
-  }
+  "throttle": "2s",
+  "initDelay": "5s"
 }
